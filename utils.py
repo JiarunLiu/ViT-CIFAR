@@ -81,6 +81,7 @@ def get_dataset(args):
         args.padding = 4
         args.mean, args.std = [0.4914, 0.4822, 0.4465], [0.2470, 0.2435, 0.2616]
         train_transform, test_transform = get_transform(args)
+        root = "data/cifar10"
         train_ds = torchvision.datasets.CIFAR10(root, train=True, transform=train_transform, download=True)
         test_ds = torchvision.datasets.CIFAR10(root, train=False, transform=test_transform, download=True)
 
@@ -91,6 +92,7 @@ def get_dataset(args):
         args.padding = 4
         args.mean, args.std = [0.5071, 0.4867, 0.4408], [0.2675, 0.2565, 0.2761]
         train_transform, test_transform = get_transform(args)
+        root = "data/cifar100"
         train_ds = torchvision.datasets.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_ds = torchvision.datasets.CIFAR100(root, train=False, transform=test_transform, download=True)
 
@@ -101,6 +103,7 @@ def get_dataset(args):
         args.padding = 4
         args.mean, args.std = [0.4377, 0.4438, 0.4728], [0.1980, 0.2010, 0.1970]
         train_transform, test_transform = get_transform(args)
+        root = "data/svhn"
         train_ds = torchvision.datasets.SVHN(root, split="train",transform=train_transform, download=True)
         test_ds = torchvision.datasets.SVHN(root, split="test", transform=test_transform, download=True)
 
