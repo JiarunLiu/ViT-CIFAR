@@ -1,3 +1,5 @@
+import yaml
+
 import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
@@ -5,6 +7,11 @@ import torchvision.transforms as transforms
 from autoaugment import CIFAR10Policy, SVHNPolicy
 from criterions import LabelSmoothingCrossEntropyLoss
 from da import RandomCropPaste
+
+def load_yaml(file_dir):
+    with open(file_dir) as f:
+        data = yaml.load(f, Loader=yaml.FullLoader)
+    return data
 
 def get_criterion(args):
     if args.criterion=="ce":
@@ -16,6 +23,21 @@ def get_criterion(args):
         raise ValueError(f"{args.criterion}?")
 
     return criterion
+
+def get_model_cfg(args):
+    cfg_files = {
+        # "vit": "./model_cfg/vit_base.yaml",
+        "vit-b": "./model_cfg/vit_base.yaml",
+        "vit-l": "./model_cfg/vit_large.yaml",
+        "vit-h": "./model_cfg/vit_huge.yaml",
+    }
+    cfg = load_yaml(cfg_files[args.model_name])
+    cfg['num_classes'] = args.num_classes
+    # cfg['image_size'] = args.size
+    assert cfg['image_size'] == args.size
+    assert cfg['channels'] == args.in_c
+
+    return cfg
 
 def get_model(args):
     if args.model_name == 'vit':
@@ -32,6 +54,10 @@ def get_model(args):
             head=args.head,
             is_cls_token=args.is_cls_token
             )
+    elif 'vit' in args.model_name:
+        from vit_pytorch import ViT
+        cfg = get_model_cfg(args)
+        net = ViT(**cfg)
     else:
         raise NotImplementedError(f"{args.model_name} is not implemented yet...")
 
@@ -41,6 +67,7 @@ def get_transform(args):
     train_transform = []
     test_transform = []
     train_transform += [
+        transforms.Resize(size=args.size),
         transforms.RandomCrop(size=args.size, padding=args.padding)
     ]
     if args.dataset != 'svhn':
@@ -75,35 +102,35 @@ def get_transform(args):
 def get_dataset(args):
     root = "data"
     if args.dataset == "c10":
+        root = "data/cifar10"
         args.in_c = 3
         args.num_classes=10
-        args.size = 32
+        # args.size = 32
         args.padding = 4
         args.mean, args.std = [0.4914, 0.4822, 0.4465], [0.2470, 0.2435, 0.2616]
         train_transform, test_transform = get_transform(args)
-        root = "data/cifar10"
         train_ds = torchvision.datasets.CIFAR10(root, train=True, transform=train_transform, download=True)
         test_ds = torchvision.datasets.CIFAR10(root, train=False, transform=test_transform, download=True)
 
     elif args.dataset == "c100":
+        root = "data/cifar100"
         args.in_c = 3
         args.num_classes=100
-        args.size = 32
+        # args.size = 32
         args.padding = 4
         args.mean, args.std = [0.5071, 0.4867, 0.4408], [0.2675, 0.2565, 0.2761]
         train_transform, test_transform = get_transform(args)
-        root = "data/cifar100"
         train_ds = torchvision.datasets.CIFAR100(root, train=True, transform=train_transform, download=True)
         test_ds = torchvision.datasets.CIFAR100(root, train=False, transform=test_transform, download=True)
 
     elif args.dataset == "svhn":
+        root = "data/svhn"
         args.in_c = 3
         args.num_classes=10
-        args.size = 32
+        # args.size = 32
         args.padding = 4
         args.mean, args.std = [0.4377, 0.4438, 0.4728], [0.1980, 0.2010, 0.1970]
         train_transform, test_transform = get_transform(args)
-        root = "data/svhn"
         train_ds = torchvision.datasets.SVHN(root, split="train",transform=train_transform, download=True)
         test_ds = torchvision.datasets.SVHN(root, split="test", transform=test_transform, download=True)
 

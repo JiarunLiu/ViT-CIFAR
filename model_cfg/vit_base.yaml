@@ -1,0 +1,13 @@
+# input dim
+image_size: 256
+patch_size: 32
+channels: 3
+num_classes: 1000
+# net structure
+depth: 12
+dim: 768
+mlp_dim: 3072
+heads: 12
+# regularization
+dropout: 0.1
+emb_dropout: 0.1
