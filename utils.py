@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 from autoaugment import CIFAR10Policy, SVHNPolicy
 from criterions import LabelSmoothingCrossEntropyLoss
 from da import RandomCropPaste
+from noisy_dataset import DatasetWrapper
 
 def load_yaml(file_dir):
     with open(file_dir) as f:
@@ -136,11 +137,17 @@ def get_dataset(args):
 
     else:
         raise NotImplementedError(f"{args.dataset} is not implemented yet.")
+
+    if args.noise_rate > 0:
+        train_ds = DatasetWrapper(train_ds, args.noise_type, args.noise_rate,
+                                  noise_train=True, num_cls=args.num_classes)
     
     return train_ds, test_ds
 
 def get_experiment_name(args):
-    experiment_name = f"{args.model_name}_{args.dataset}"
+    experiment_name = f"{args.model_name}_{args.dataset}_{args.noise_type}"
+    if args.noise_type != 'clean':
+        experiment_name+=f"_{args.noise_rate}"
     if args.autoaugment:
         experiment_name+="_aa"
     if args.label_smoothing:

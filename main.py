@@ -15,6 +15,8 @@ from da import CutMix, MixUp
 parser = argparse.ArgumentParser()
 parser.add_argument("--api-key", help="API Key for Comet.ml")
 parser.add_argument("--dataset", default="c10", type=str, help="[c10, c100, svhn]")
+parser.add_argument("--noise-type", default="clean", type=str, help="[clean, sn, pairflip]")
+parser.add_argument("--noise-rate", default=0.0, type=float)
 parser.add_argument("--num-classes", default=10, type=int)
 parser.add_argument("--size", default=256, type=int)
 parser.add_argument("--model-name", default="vit", help="[vit]", type=str,
