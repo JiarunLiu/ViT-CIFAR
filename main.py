@@ -18,7 +18,7 @@ parser.add_argument("--dataset", default="c10", type=str, help="[c10, c100, svhn
 parser.add_argument("--noise-type", default="clean", type=str, help="[clean, sn, pairflip]")
 parser.add_argument("--noise-rate", default=0.0, type=float)
 parser.add_argument("--num-classes", default=10, type=int)
-parser.add_argument("--size", default=256, type=int)
+parser.add_argument("--size", default=32, type=int)
 parser.add_argument("--model-name", default="vit", help="[vit]", type=str,
                     choices=['vit', 'vit-b', 'vit-l', 'vit-h'])
 parser.add_argument("--patch", default=8, type=int)
