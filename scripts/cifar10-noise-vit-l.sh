@@ -1,3 +1,5 @@
+python main.py --dataset c10 --noise-type clean --model-name vit-l --size 256 --label-smoothing --autoaugment
+
 python main.py --dataset c10 --noise-type clean --model-name vit-l --size 256
 
 # Symmetric noise
